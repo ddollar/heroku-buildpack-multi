@@ -24,7 +24,7 @@ for BUILDPACK in $(cat $1/.buildpacks); do
     framework=$($dir/bin/detect $1)
 
     if [ $? == 0 ]; then
-      echo "Detected Framework: $framework"
+      echo "=====> Detected Framework: $framework"
       $dir/bin/compile $1
 
       if [ $? != 0 ]; then
