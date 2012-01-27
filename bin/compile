@@ -1,7 +1,7 @@
 #!/bin/sh
 
 for BUILDPACK in $(cat $1/.buildpacks); do
-  dir=$(mktemp -t foo)
+  dir=$(mktemp -t buildpackXXXXX)
   rm -rf $dir
 
   url=${BUILDPACK%#*}
