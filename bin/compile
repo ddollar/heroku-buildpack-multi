@@ -12,11 +12,11 @@ for BUILDPACK in $(cat $1/.buildpacks); do
   fi
 
   if [ "$url" != "" ]; then
-    git clone $url $dir
+    git clone $url $dir >/dev/null 2>&1
     cd $dir
 
     if [ "$branch" != "" ]; then
-      git checkout $branch
+      git checkout $branch >/dev/null 2>&1
     fi
 
     chmod +x $dir/bin/{detect,compile,release}
