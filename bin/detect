@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 if [ -f $1/.buildpacks ]; then
   echo "Multipack"
