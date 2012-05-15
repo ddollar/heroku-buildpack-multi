@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+set -e
+
+function indent() {
+  c='s/^/       /'
+  case $(uname) in
+    Darwin) sed -l "$c";;
+    *)      sed -u "$c";;
+  esac
+}
+
 for BUILDPACK in $(cat $1/.buildpacks); do
   dir=$(mktemp -t buildpackXXXXX)
   rm -rf $dir
@@ -30,6 +40,11 @@ for BUILDPACK in $(cat $1/.buildpacks); do
       if [ $? != 0 ]; then
         exit 1
       fi
+
+      $dir/bin/release $1 > $1/last_pack_release.out
     fi
   fi
 done
+
+echo "Using release configuration from last framework $framework:" | indent
+cat $1/last_pack_release.out | indent

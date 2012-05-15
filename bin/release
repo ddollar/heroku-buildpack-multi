@@ -1,6 +1,3 @@
 #!/usr/bin/env bash
-# bin/release <build-dir>
 
-cat <<EOF
----
-EOF
+cat $1/last_pack_release.out
