@@ -10,6 +10,8 @@ function indent() {
   esac
 }
 
+unset GIT_DIR
+
 for BUILDPACK in $(cat $1/.buildpacks); do
   dir=$(mktemp -t buildpackXXXXX)
   rm -rf $dir
@@ -22,6 +24,7 @@ for BUILDPACK in $(cat $1/.buildpacks); do
   fi
 
   if [ "$url" != "" ]; then
+    echo "=====> Downloading Buildpack: $url"
     git clone $url $dir >/dev/null 2>&1
     cd $dir
 
