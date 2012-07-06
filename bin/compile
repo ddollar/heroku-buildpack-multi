@@ -2,6 +2,9 @@
 
 set -e
 
+BUILD_DIR=$1
+CACHE_DIR=$2
+
 function indent() {
   c='s/^/       /'
   case $(uname) in
@@ -12,7 +15,7 @@ function indent() {
 
 unset GIT_DIR
 
-for BUILDPACK in $(cat $1/.buildpacks); do
+for BUILDPACK in $(cat $BUILD_DIR/.buildpacks); do
   dir=$(mktemp -t buildpackXXXXX)
   rm -rf $dir
 
@@ -34,20 +37,20 @@ for BUILDPACK in $(cat $1/.buildpacks); do
 
     chmod +x $dir/bin/{detect,compile,release}
 
-    framework=$($dir/bin/detect $1)
+    framework=$($dir/bin/detect $BUILD_DIR)
 
     if [ $? == 0 ]; then
       echo "=====> Detected Framework: $framework"
-      $dir/bin/compile $1 $2
+      $dir/bin/compile $BUILD_DIR $CACHE_DIR
 
       if [ $? != 0 ]; then
         exit 1
       fi
 
-      $dir/bin/release $1 > $1/last_pack_release.out
+      $dir/bin/release $BUILD_DIR > $BUILD_DIR/last_pack_release.out
     fi
   fi
 done
 
 echo "Using release configuration from last framework $framework:" | indent
-cat $1/last_pack_release.out | indent
+cat $BUILD_DIR/last_pack_release.out | indent
