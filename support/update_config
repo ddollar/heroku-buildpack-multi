@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby
+# support/update_config config.yml build_env < new_config_data
+
+require "yaml"
+require "shellwords"
+
+release_config_file = ARGV[0]
+build_env_file = ARGV[1]
+
+class ReleaseConfig
+  def initialize(config = {})
+    @config = config
+  end
+
+  def [](key)
+    @config[key]
+  end
+
+  def []=(key, value)
+    @config[key] = value
+  end
+
+  def addons
+    self["addons"] ||= []
+  end
+
+  def build_env
+    self["build_env"] ||= {}
+  end
+
+  def config_vars
+    self["config_vars"] ||= {}
+  end
+
+  def default_process_types
+    self["default_process_types"] ||= {}
+  end
+
+  def merge(other)
+    merged = ReleaseConfig.new
+
+    merged["addons"] = addons | other.addons
+    merged["build_env"] = build_env.merge(other.build_env)
+    merged["config_vars"] = config_vars.merge(other.config_vars)
+    merged["default_process_types"] = default_process_types.merge(other.default_process_types)
+
+    merged
+  end
+
+  def write_release_config(filename)
+    File.open(filename, "w") do |file|
+      YAML.dump @config, file
+    end
+  end
+
+  def write_build_env(filename)
+    File.open(filename, "w") do |file|
+      build_env.each do |key, value|
+        file.puts "#{key}=#{value}"
+      end
+    end
+  end
+end
+
+source = ReleaseConfig.new(YAML.load_file(release_config_file))
+new = ReleaseConfig.new(YAML.load($stdin.read))
+
+merged = source.merge(new)
+
+merged.write_release_config release_config_file
+merged.write_build_env build_env_file

@@ -2,6 +2,17 @@
 
 set -e
 
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+SUPPORT_DIR=$(dirname $0)/../support/
+
+RELEASE_CONFIG=$BUILD_DIR/release_config.yml
+BUILD_ENV=$CACHE_DIR/build_env
+
+mkdir -p $BUILD_DIR
+mkdir -p $CACHE_DIR
+
 function indent() {
   c='s/^/       /'
   case $(uname) in
@@ -10,9 +21,24 @@ function indent() {
   esac
 }
 
+function with_env() {
+  if [ -s $BUILD_ENV ]; then
+    env "$(cat $BUILD_ENV)" $*
+  else
+    env $*
+  fi
+}
+
+# reset build environment
+echo "=====> Resetting build environment"
+> $BUILD_ENV
+
+echo "=====> Generating empty release configuration"
+echo "--- {}" > $RELEASE_CONFIG
+
 unset GIT_DIR
 
-for BUILDPACK in $(cat $1/.buildpacks); do
+for BUILDPACK in $(cat $BUILD_DIR/.buildpacks); do
   dir=$(mktemp -t buildpackXXXXX)
   rm -rf $dir
 
@@ -34,20 +60,22 @@ for BUILDPACK in $(cat $1/.buildpacks); do
 
     chmod +x $dir/bin/{detect,compile,release}
 
-    framework=$($dir/bin/detect $1)
+    framework=$(with_env $dir/bin/detect $BUILD_DIR)
 
     if [ $? == 0 ]; then
       echo "=====> Detected Framework: $framework"
-      $dir/bin/compile $1 $2
+      with_env $dir/bin/compile $BUILD_DIR $CACHE_DIR
 
       if [ $? != 0 ]; then
         exit 1
       fi
 
-      $dir/bin/release $1 > $1/last_pack_release.out
+      config=$(with_env $dir/bin/release $BUILD_DIR)
+
+      $SUPPORT_DIR/update_config $RELEASE_CONFIG $BUILD_ENV <<< "${config}"
     fi
   fi
 done
 
-echo "Using release configuration from last framework $framework:" | indent
-cat $1/last_pack_release.out | indent
+echo "Using release configuration from framework $framework:" | indent
+cat $RELEASE_CONFIG | indent
