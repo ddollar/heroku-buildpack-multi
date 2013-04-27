@@ -38,7 +38,8 @@ for BUILDPACK in $(cat $1/.buildpacks); do
       git checkout $branch >/dev/null 2>&1
     fi
 
-    chmod +x $dir/bin/{detect,compile,release}
+    # we'll get errors later if these are needed and don't exist
+    chmod -f +x $dir/bin/{detect,compile,release} || true
 
     framework=$($dir/bin/detect $1)
 
@@ -50,10 +51,14 @@ for BUILDPACK in $(cat $1/.buildpacks); do
         exit 1
       fi
 
-      $dir/bin/release $1 > $1/last_pack_release.out
+      if [ -x $dir/bin/release ]; then
+        $dir/bin/release $1 > $1/last_pack_release.out
+      fi
     fi
   fi
 done
 
-echo "Using release configuration from last framework $framework:" | indent
-cat $1/last_pack_release.out | indent
+if [ -e $1/last_pack_release.out ]; then
+  echo "Using release configuration from last framework $framework:" | indent
+  cat $1/last_pack_release.out | indent
+fi
