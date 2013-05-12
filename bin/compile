@@ -25,7 +25,13 @@ for BUILDPACK in $(cat $1/.buildpacks); do
 
   if [ "$url" != "" ]; then
     echo "=====> Downloading Buildpack: $url"
-    git clone $url $dir >/dev/null 2>&1
+
+    if [[ "$url" =~ \.tgz$ ]]; then
+      mkdir -p "$dir"
+      curl -s "$url" | tar xvz -C "$dir" >/dev/null 2>&1
+    else
+      git clone $url $dir >/dev/null 2>&1
+    fi
     cd $dir
 
     if [ "$branch" != "" ]; then
