@@ -52,8 +52,8 @@ for BUILDPACK in $(cat $1/.buildpacks); do
       fi
 
       # check if the buildpack left behind an environment for subsequent ones
-      if [ -e $1/build_env.sh ]; then
-        source $1/build_env.sh
+      if [ -e $dir/export ]; then
+        source $dir/export
       fi
 
       if [ -x $dir/bin/release ]; then
