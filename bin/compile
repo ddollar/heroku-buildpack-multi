@@ -12,6 +12,8 @@ function indent() {
 
 unset GIT_DIR
 
+ORIGINAL=$(pwd)
+
 for BUILDPACK in $(cat $1/.buildpacks); do
   dir=$(mktemp -t buildpackXXXXX)
   rm -rf $dir
@@ -32,10 +34,11 @@ for BUILDPACK in $(cat $1/.buildpacks); do
     else
       git clone $url $dir >/dev/null 2>&1
     fi
-    cd $dir
 
     if [ "$branch" != "" ]; then
+      cd $dir
       git checkout $branch >/dev/null 2>&1
+      cd $ORIGINAL
     fi
 
     # we'll get errors later if these are needed and don't exist
