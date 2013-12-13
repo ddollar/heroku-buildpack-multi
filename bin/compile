@@ -45,7 +45,7 @@ for BUILDPACK in $(cat $1/.buildpacks); do
 
     if [ $? == 0 ]; then
       echo "=====> Detected Framework: $framework"
-      $dir/bin/compile $1 $2
+      $dir/bin/compile $1 $2 $3
 
       if [ $? != 0 ]; then
         exit 1
