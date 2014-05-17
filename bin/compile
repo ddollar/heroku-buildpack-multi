@@ -59,6 +59,5 @@ for BUILDPACK in $(cat $1/.buildpacks); do
 done
 
 if [ -e $1/last_pack_release.out ]; then
-  echo "Using release configuration from last framework $framework:" | indent
-  cat $1/last_pack_release.out | indent
+  echo "Using release configuration from last framework ($framework)."
 fi
