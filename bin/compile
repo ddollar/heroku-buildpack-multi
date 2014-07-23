@@ -31,6 +31,7 @@ for BUILDPACK in $(cat $1/.buildpacks); do
       curl -s "$url" | tar xvz -C "$dir" >/dev/null 2>&1
     else
       git clone $url $dir >/dev/null 2>&1
+      git submodule update --init >/dev/null 2>&1
     fi
     cd $dir
 
