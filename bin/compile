@@ -33,7 +33,7 @@ for BUILDPACK in $(cat $1/.buildpacks); do
       git clone $url $dir >/dev/null 2>&1
       if [ -f "$dir/.gitmodules" ]; then
         echo "=====> Detected git submodules. Initializing..."
-        $(cd $dir && git submodule update --init --recursive)
+        (cd $dir && git submodule update --init --recursive)
       fi
     fi
     cd $dir
