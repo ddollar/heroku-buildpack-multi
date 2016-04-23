@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+echo "This buildpack has been deprecated. Please choose a different buildpack or fork to your own account."
+exit 1
+
 if [ -f $1/.buildpacks ]; then
   echo "Multipack"
   exit 0
