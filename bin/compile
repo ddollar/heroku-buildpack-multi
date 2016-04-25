@@ -2,12 +2,12 @@
 
 set -e
 
-echo "WARNING: This buildpack is no longer maintained."
+echo "\e[1;33m\]WARNING: This buildpack is no longer maintained."
 echo
 echo "Please choose a different buildpack or go to https://github.com/ddollar/heroku-buildpack-multi"
 echo "and fork it to your own account."
 echo
-echo "This buildpack will cease to function at the stroke of midnight on January 1, 2017."
+echo "This buildpack will cease to function at the stroke of midnight on January 1, 2017.\e[0m"
 
 [ $(date +%Y%m%d%H%M%S) -gt "20170101000000" ] && exit 1
 
